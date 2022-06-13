@@ -8,7 +8,7 @@ import (
 
 //queries string
 const (
-	insertUser      = `INSERT INTO users (firstname, lastname, username, password) VALUES ($1, $2, $3, $4)`
+	insertUser      = `INSERT INTO users (firstname, lastname, username, password, role) VALUES ($1, $2, $3, $4, $5)`
 	selectAllusers  = `SELECT firstname, lastname, username, role From users`
 	updateUser      = `UPDATE users SET firstname=$1, lastname=$2, username=$3 WHERE username=$4`
 	adminUpdateUser = `UPDATE users SET firstname=$1, lastname=$2, username=$3, role=$4, is_active=$5 WHERE username=$6`
@@ -23,11 +23,11 @@ func InsertUser(newUser models.User) string {
 	//get the db instance
 	db := GetDB()
 	//query the database
-	_, err := db.Exec(insertUser, newUser.Firstname, newUser.Lastname, newUser.Username, newUser.Password)
+	_, err := db.Exec(insertUser, newUser.Firstname, newUser.Lastname, newUser.Username, newUser.Password, newUser.Role)
 	//if there is an error, handle it
 	if err != nil {
-		response := ErrorHandler(err)
-		return response
+		//response := ErrorHandler(err)
+		return err.Error()
 	}
 	//insertion succed
 	return "New user " + newUser.Username + " inserted!\nTry to connect."
@@ -117,19 +117,18 @@ func AdminEditUser(username string, user models.User) bool {
 }
 
 //return all the user info correspoding to the username passed as parameter
-func GetUser(username string) (models.User, string) {
+func GetUser(username string) (models.User, error) {
 	var savedUser models.User
 	db := GetDB()
 	var id int
 	//set username to lowewrcase
 	lowerName := strings.ToLower(username)
 	//QueryRow return a single row
-	err := db.QueryRow(getUser, lowerName).Scan(&id, &savedUser.Firstname, &savedUser.Lastname, &savedUser.Username, &savedUser.IsActive, &savedUser.Password, &savedUser.Role)
+	err := db.QueryRow(getUser, lowerName).Scan(&id, &savedUser.Firstname, &savedUser.Lastname, &savedUser.Username, &savedUser.IsActive, &savedUser.Password, &savedUser.Role, &savedUser.CreatedOn, &savedUser.ModifiedBy)
 
 	if err != nil {
-		errorMessage := ErrorHandler(err)
-		return savedUser, errorMessage
+		return savedUser, err
 	}
 
-	return savedUser, ""
+	return savedUser, nil
 }

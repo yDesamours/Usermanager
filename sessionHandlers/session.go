@@ -8,10 +8,12 @@ import (
 	"usermanager/models"
 	"usermanager/utils"
 
+	"github.com/antonlindstrom/pgstore"
 	"github.com/gorilla/sessions"
 )
 
-var Sessionstore = sessions.NewCookieStore([]byte("My very secret key"))
+var connectionString = database.CreateConnectionString()
+var Sessionstore, err = pgstore.NewPGStore(connectionString, []byte("my secure key"))
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -20,11 +22,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&logger)
 	fmt.Println(logger)
 	//search for the user in the database
-	savedUser, message := database.GetUser(logger.Username)
+	savedUser, err := database.GetUser(logger.Username)
 	//if user does not exist
 
-	if message != "" {
-		fmt.Fprintf(w, "Username does not exist!")
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
 		return
 	}
 
@@ -60,7 +62,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //this function retrieve the infos about the connected user
-func GetUser(r *http.Request) models.User {
+func GetUser(r *http.Request) (models.User, error) {
 
 	//get the session
 	session, _ := Sessionstore.Get(r, "current-session")
@@ -68,9 +70,9 @@ func GetUser(r *http.Request) models.User {
 	//convert in into a string
 	username := fmt.Sprint(session.Values["username"])
 	//query the database to get the user info
-	currentUser, _ := database.GetUser(username)
+	currentUser, err := database.GetUser(username)
 
-	return currentUser
+	return currentUser, err
 }
 
 //Middlewarre to check if user is connected

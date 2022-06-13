@@ -16,9 +16,14 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	//etract the json data from the request. copy them into a user structure
 	var newUser models.User
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
+
+	_, err := sessionHandlers.GetUser(r)
+
 	//set de user's role and activity to their default value
-	newUser.Role = 0
-	newUser.IsActive = true
+	if err != nil {
+		newUser.Role = 1
+		newUser.IsActive = true
+	}
 
 	//test user credentials
 	if err := utils.TestCredentials(newUser, true); err != nil {
@@ -32,7 +37,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Sanitize(&newUser)
 	//insert thw user
 	result := database.InsertUser(newUser)
-
+	fmt.Println(newUser)
 	//the insertion may failed
 	//the result old info describing what happens
 	fmt.Fprintf(w, result)
@@ -55,7 +60,7 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&edit)
 
 	//get the current user infos
-	currentUser := sessionHandlers.GetUser(r)
+	currentUser, _ := sessionHandlers.GetUser(r)
 	//thes for password matching. On failure, end the process
 	if ok := utils.ComparePassword(edit.Password, currentUser.Password); !ok {
 		fmt.Fprintf(w, "Incorect password")
@@ -87,7 +92,7 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}{}
 	json.NewDecoder(r.Body).Decode(&edit)
 	//get the current user info
-	currentUser := sessionHandlers.GetUser(r)
+	currentUser, _ := sessionHandlers.GetUser(r)
 	//test for password matching
 	if ok := utils.ComparePassword(edit.ActualPassword, currentUser.Password); !ok {
 		fmt.Fprintf(w, "Incorect password")
@@ -111,7 +116,7 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 //this handler permits an admin to modify a user's info
 func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user
-	currentUser := sessionHandlers.GetUser(r)
+	currentUser, _ := sessionHandlers.GetUser(r)
 	//if he is not an admin, stop the process
 	if currentUser.Role != 1 {
 		fmt.Fprintf(w, "Not allowed")
@@ -127,9 +132,9 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	}{}
 	json.NewDecoder(r.Body).Decode(&editor) //all data are strored.fmt.Println(editor)
 	//call the database to retrieve informations about the targeted user
-	targetedUser, message := database.GetUser(editor.Username)
-	if message != "" {
-		fmt.Fprintf(w, message)
+	targetedUser, err := database.GetUser(editor.Username)
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
 		return
 	}
 	//If the targeted user is an admin, stop the process

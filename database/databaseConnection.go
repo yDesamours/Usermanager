@@ -12,9 +12,8 @@ import (
 )
 
 //key for database connection
-var credentials string
 
-func createConnectionString() {
+func CreateConnectionString() string {
 	var keys models.ConnectString
 	//open json file
 	keyFile, err := os.Open("database/keys.json")
@@ -30,8 +29,9 @@ func createConnectionString() {
 	json.Unmarshal(content, &keys)
 
 	//compose json string
-	credentials = fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", keys.Host, keys.Username, keys.Password, keys.Dbname)
+	credentials := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", keys.Host, keys.Username, keys.Password, keys.Dbname)
 
+	return credentials
 }
 
 //connection ctring required by sql.Open function
@@ -42,8 +42,8 @@ var DB *sql.DB
 
 //function to initiate the connection
 func Connect() {
-	createConnectionString()
-	db, err := sql.Open("postgres", credentials)
+	connectionString := CreateConnectionString()
+	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		panic("Cant connect to database!")
 	}
