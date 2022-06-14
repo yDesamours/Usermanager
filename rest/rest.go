@@ -41,7 +41,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(newUser)
 	//the insertion may failed
 	//the result old info describing what happens
-	fmt.Fprintf(w, result)
+	fmt.Fprintf(w, result.Error())
 }
 
 //to get all users

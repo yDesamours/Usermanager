@@ -34,7 +34,7 @@ func InsertUser(newUser models.User) error {
 		return err
 	}
 	//insertion succed
-	return "New user " + newUser.Username + " inserted!\nTry to connect."
+	return nil
 }
 
 //function to get all users
