@@ -121,7 +121,7 @@ func AdminEditUser(username string, user models.User) bool {
 }
 
 //return all the user info correspoding to the username passed as parameter
-func GetUser(username string) (models.User, error) {
+func GetUser(username string) (*models.User, error) {
 	var savedUser models.User
 	db := GetDB()
 	var id int
@@ -131,10 +131,10 @@ func GetUser(username string) (models.User, error) {
 	err := db.QueryRow(getUser, lowerName).Scan(&id, &savedUser.Firstname, &savedUser.Lastname, &savedUser.Username, &savedUser.Role, &savedUser.IsActive, &savedUser.CreatedOn)
 
 	if err != nil {
-		return savedUser, err
+		return nil, err
 	}
 
-	return savedUser, nil
+	return &savedUser, nil
 }
 
 //this function return the id of a role
