@@ -6,15 +6,22 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"usermanager/models"
 
 	_ "github.com/lib/pq"
 )
 
 //key for database connection
 
+type connectString struct {
+	Dbname   string
+	Host     string
+	Port     int
+	Username string
+	Password string
+}
+
 func CreateConnectionString() string {
-	var keys models.ConnectString
+	var keys connectString
 	//open json file
 	keyFile, err := os.Open("database/keys.json")
 	if err != nil {
