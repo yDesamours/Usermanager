@@ -14,11 +14,3 @@ type User struct {
 	CreatedOn  string        `json:"isActive"`
 	ModifiedBy sql.NullInt64 `json:"modifiedBy"`
 }
-
-type ConnectString struct {
-	Dbname   string
-	Host     string
-	Port     int
-	Username string
-	Password string
-}
