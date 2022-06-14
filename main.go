@@ -3,14 +3,14 @@ package main
 import (
 	"net/http"
 	"time"
-	"usermanager/doa"
+	"usermanager/dao"
 	"usermanager/routes"
 	"usermanager/sessionHandlers"
 )
 
 func main() {
 	//try connecting to the database
-	doa.Connect()
+	dao.Connect()
 	sessionHandlers.Sessionstore.Cleanup(time.Hour)
 
 	http.Handle("/", routes.Router())

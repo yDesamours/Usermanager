@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"usermanager/doa"
+	"usermanager/dao"
 	"usermanager/models"
 	"usermanager/sessionHandlers"
 	"usermanager/utils"
@@ -37,7 +37,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	//lowercase all character, expect the password
 	utils.Sanitize(&newUser)
 	//insert thw user
-	result := doa.InsertUser(newUser)
+	result := dao.InsertUser(newUser)
 	fmt.Println(newUser)
 	//the insertion may failed
 	//the result old info describing what happens
@@ -46,8 +46,8 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 //to get all users
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	//query the doa for all users
-	users := doa.GetAllUsers()
+	//query the dao for all users
+	users := dao.GetAllUsers()
 	//send response as json
 	json.NewEncoder(w).Encode(users)
 
@@ -76,8 +76,8 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//lowercase everything
 	utils.Sanitize(&edit)
-	//query the doa for update
-	if update := doa.EditUser(currentUser.Username, edit); update {
+	//query the dao for update
+	if update := dao.EditUser(currentUser.Username, edit); update {
 		fmt.Fprintf(w, "User's informations successfully updated!")
 	} else {
 		fmt.Fprintf(w, "Failed to update username")
@@ -107,8 +107,8 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//hash the password
 	hash := utils.HashPassword(edit.NewPassword)
-	//query the doa to change the password
-	if update := doa.EditPassword(hash, currentUser.Username); update {
+	//query the dao to change the password
+	if update := dao.EditPassword(hash, currentUser.Username); update {
 		fmt.Fprintf(w, "Password Updated!")
 	} else {
 		fmt.Fprintf(w, "Failed to update password")
@@ -133,8 +133,8 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 		Username string      `json:"targetusername"`
 	}{}
 	json.NewDecoder(r.Body).Decode(&editor) //all data are strored.fmt.Println(editor)
-	//call the doa to retrieve informations about the targeted user
-	targetedUser, err := doa.GetUser(editor.Username)
+	//call the dao to retrieve informations about the targeted user
+	targetedUser, err := dao.GetUser(editor.Username)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 		return
@@ -157,8 +157,8 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Incorect password")
 		return
 	}
-	//everything is correct. Contact the doa to make the change
-	if ok := doa.AdminEditUser(editor.Username, editor.User); !ok {
+	//everything is correct. Contact the dao to make the change
+	if ok := dao.AdminEditUser(editor.Username, editor.User); !ok {
 		fmt.Fprintf(w, "Failed to update user's infos!")
 	} else {
 		fmt.Fprintf(w, "User's infos updated!")
