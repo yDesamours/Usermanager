@@ -5,6 +5,6 @@ import (
 	"usermanager/models"
 )
 
-func GetAllUsers() []models.User{
-	return users := dao.GetAllUsers()
+func GetAllUsers() []models.User {
+	return dao.GetAllUsers()
 }

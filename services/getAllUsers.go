@@ -2,8 +2,9 @@ package services
 
 import (
 	"usermanager/controllers"
+	"usermanager/models"
 )
 
-func GetAllUsers() {
+func GetAllUsers() []models.User {
 	return controllers.GetAllUsers()
 }
