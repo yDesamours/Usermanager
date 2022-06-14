@@ -89,7 +89,7 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	//get old password and new password submitted by the user
 	edit := struct {
-		ActualPassword string `json:"password"`
+		ActualPassword string `json:"actualpassword"`
 		NewPassword    string `json:"newpassword"`
 	}{}
 	json.NewDecoder(r.Body).Decode(&edit)

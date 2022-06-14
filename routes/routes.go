@@ -17,7 +17,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/api/usermanager/updateuser", sessionHandlers.IsloggedInHandler(rest.EditUserHandler)).Methods("PUT")
 	router.HandleFunc("/api/usermanager/updatepassword", sessionHandlers.IsloggedInHandler(rest.EditPasswordHandler)).Methods("PUT")
 	router.HandleFunc("/api/usermanager/adminupdateuser", sessionHandlers.IsloggedInHandler(rest.AdminEditUserHandler)).Methods("PUT")
-	router.HandleFunc("/api/usermanager/login", sessionHandlers.LoginHandler).Methods("GET")
+	router.HandleFunc("/api/usermanager/login", sessionHandlers.LoginHandler).Methods("POST")
 	router.HandleFunc("/api/usermanager/logout", sessionHandlers.IsloggedInHandler(sessionHandlers.LogoutHandler)).Methods("GET")
 
 	return router
