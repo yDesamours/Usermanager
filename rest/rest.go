@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"usermanager/dao"
 	"usermanager/models"
+	"usermanager/services"
 	"usermanager/sessionHandlers"
 	"usermanager/utils"
 )
@@ -25,23 +26,13 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		newUser.Role = "client"
 		newUser.IsActive = true
 	}
-
-	//test user credentials
-	if err := utils.TestCredentials(newUser, true); err != nil {
-		fmt.Fprintf(w, err.Error())
-		return
+	//contact the services for insertion
+	result := services.AddUser(newUser)
+	//the insertion may fail
+	if result != nil {
+		fmt.Fprintf(w, result.Error())
 	}
-
-	//hash the submitted password
-	newUser.Password = utils.HashPassword(newUser.Password)
-	//lowercase all character, expect the password
-	utils.Sanitize(&newUser)
-	//insert thw user
-	result := dao.InsertUser(newUser)
-	fmt.Println(newUser)
-	//the insertion may failed
-	//the result old info describing what happens
-	fmt.Fprintf(w, result.Error())
+	fmt.Fprintf(w, "New user Inserted")
 }
 
 //to get all users
