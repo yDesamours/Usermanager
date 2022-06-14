@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"usermanager/database"
+	"usermanager/dao"
 	"usermanager/models"
 	"usermanager/utils"
 
@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var connectionString = database.CreateConnectionString()
+var connectionString = dao.CreateConnectionString()
 var Sessionstore, err = pgstore.NewPGStore(connectionString, []byte("my secure key"))
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +21,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	//copy the user credentials sent as json
 	json.NewDecoder(r.Body).Decode(&logger)
 	fmt.Println(logger)
-	//search for the user in the database
-	savedUser, err := database.GetUser(logger.Username)
+	//search for the user in the dao
+	savedUser, err := dao.GetUser(logger.Username)
 	//if user does not exist
 
 	if err != nil {
@@ -69,8 +69,8 @@ func GetUser(r *http.Request) (models.User, error) {
 	//the username key stored in the session.Values interface is an interface{}
 	//convert in into a string
 	username := fmt.Sprint(session.Values["username"])
-	//query the database to get the user info
-	currentUser, err := database.GetUser(username)
+	//query the dao to get the user info
+	currentUser, err := dao.GetUser(username)
 
 	return currentUser, err
 }
