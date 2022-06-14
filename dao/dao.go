@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"usermanager/models"
@@ -38,49 +39,36 @@ func InsertUser(newUser models.User) error {
 }
 
 //function to get all users
-func GetAllUsers() []models.User {
+func GetAllUsers() (*sql.Rows, error) {
 	//get the database instance
 	db := GetDB()
-	//all the user will be store into a slice
-	var users []models.User
 	//query the database. This statement return an error and all the rows selected by the query
 	rows, err := db.Query(selectAllusers)
 	//handle error
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
-	//close the rows once we read them all
-	defer rows.Close()
-	//iterate through the rows
-	for rows.Next() {
-		var user models.User
-		//store every column into the correct variable
-		rows.Scan(&user.Firstname, &user.Lastname, &user.Username, &user.Role, &user.CreatedOn, &user.IsActive)
-		users = append(users, user)
-	}
-
-	return users
+	return rows, nil
 }
 
 //allows to change firstname, lastname, username
 //accept a user structure as argument and the targeted username
-func EditUser(username string, user models.User) bool {
+func EditUser(username string, user models.User) error {
 	db := GetDB()
 	//set username to lowercase
 	fmt.Println(user)
 	//execute the query. the exec function return the result of the query and an error
 	result, err := db.Exec(updateUser, user.Firstname, user.Lastname, username)
 	if err != nil {
-		fmt.Println(err)
-		return false
+		return err
 	}
 	//the affected method of the result return the number of rows affected by the query
 	//if the number of rows is 0, the request failed
-	if affected, _ := result.RowsAffected(); affected == 0 {
-		return false
+	if affected, err := result.RowsAffected(); affected == 0 {
+		return err
 	}
 
-	return true
+	return nil
 }
 
 //allows to change a password

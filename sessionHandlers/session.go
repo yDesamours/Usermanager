@@ -31,7 +31,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//if password is incorrect
-	if ok := utils.ComparePassword(logger.Password, savedUser.Password); !ok {
+	if err := utils.ComparePassword(logger.Password, savedUser.Password); err != nil {
 		fmt.Fprintf(w, "Incorrect password!")
 		return
 	}

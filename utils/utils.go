@@ -9,21 +9,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TestPassword(pass string) (string, bool) {
+func TestPassword(pass string) error {
 
 	haveCapitalLetter := regexp.MustCompile("[A-Z]")
 	haveLowerCaseLetter := regexp.MustCompile("[a-z]")
 	haveNumber := regexp.MustCompile("[0-9]")
 	if len(pass) < 8 {
-		return "Password must have at least 8 characters", false
+		return errors.New("Password must have at least 8 characters")
 	} else if !haveCapitalLetter.Match([]byte(pass)) {
-		return "Password must have at least 1 capital letter", false
+		errors.New("Password must have at least 1 capital letter")
 	} else if !haveLowerCaseLetter.Match([]byte(pass)) {
-		return "Password must have at least 1 lowercase letter", false
+		errors.New("Password must have at least 1 lowercase letter")
 	} else if !haveNumber.Match([]byte(pass)) {
-		return "Password must have at least 1 numeric character", false
+		errors.New("Password must have at least 1 numeric character")
 	}
-	return "correct", true
+	return nil
 }
 
 func HashPassword(pass string) string {
@@ -32,10 +32,10 @@ func HashPassword(pass string) string {
 	return string(hash)
 }
 
-func ComparePassword(password, hash string) bool {
+func ComparePassword(password, hash string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 
-	return err == nil
+	return err
 }
 
 func TestCredentials(userData models.User, pass bool) error {
@@ -59,8 +59,8 @@ func TestCredentials(userData models.User, pass bool) error {
 	}
 	if pass {
 		//test for password
-		if message, ok := TestPassword(userData.Password); !ok {
-			return errors.New(message)
+		if err := TestPassword(userData.Password); err != nil {
+			return errors.New("Mismatch password")
 		}
 	}
 	return nil

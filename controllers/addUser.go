@@ -12,7 +12,6 @@ func AddUser(newUser models.User) error {
 	if err := utils.TestCredentials(newUser, true); err != nil {
 		return err
 	}
-
 	//hash the submitted password
 	newUser.Password = utils.HashPassword(newUser.Password)
 	//lowercase all character, expect the password

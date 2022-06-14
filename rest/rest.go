@@ -6,75 +6,9 @@ import (
 	"net/http"
 	"usermanager/dao"
 	"usermanager/models"
-	"usermanager/services"
 	"usermanager/sessionHandlers"
 	"usermanager/utils"
 )
-
-//for adding a new user
-func AddUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	//etract the json data from the request. copy them into a user structure
-	var newUser models.User
-	_ = json.NewDecoder(r.Body).Decode(&newUser)
-
-	//get the information about the current user
-	currentUser, err := sessionHandlers.GetUser(r)
-
-	//set de user's role and activity to their default value
-	if err != nil || currentUser.Role != "admin" {
-		newUser.Role = "client"
-		newUser.IsActive = false
-	}
-	//contact the services for insertion
-	result := services.AddUser(newUser)
-	//the insertion may fail
-	if result != nil {
-		fmt.Fprintf(w, result.Error())
-	}
-	//everything is ok
-	fmt.Fprintf(w, "New user Inserted")
-}
-
-//to get all users
-func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	//query the dao for all users
-	users := services.GetAllUsers()
-	//send response as json
-	json.NewEncoder(w).Encode(users)
-
-}
-
-//Allow a user to modify his own data
-func EditUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	//extract new info from request body
-	var edit models.User
-	json.NewDecoder(r.Body).Decode(&edit)
-
-	//get the current user infos
-	currentUser, _ := sessionHandlers.GetUser(r)
-
-	//thes for password matching. On failure, end the process
-	if ok := utils.ComparePassword(edit.Password, currentUser.Password); !ok {
-		fmt.Fprintf(w, "Incorect password")
-		return
-	}
-
-	//test for credentials. On failure, end the proces
-	if err := utils.TestCredentials(edit, false); err != nil {
-		fmt.Fprintf(w, err.Error())
-		return
-	}
-	//lowercase everything
-	utils.Sanitize(&edit)
-	//query the dao for update
-	if update := dao.EditUser(currentUser.Username, edit); update {
-		fmt.Fprintf(w, "User's informations successfully updated!")
-	} else {
-		fmt.Fprintf(w, "Failed to update username")
-	}
-}
 
 //allow a user to change his password
 func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
@@ -88,13 +22,13 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user info
 	currentUser, _ := sessionHandlers.GetUser(r)
 	//test for password matching
-	if ok := utils.ComparePassword(edit.ActualPassword, currentUser.Password); !ok {
+	if err := utils.ComparePassword(edit.ActualPassword, currentUser.Password); err != nil {
 		fmt.Fprintf(w, "Incorect password")
 		return
 	}
 	//test the new password
-	if result, ok := utils.TestPassword(edit.NewPassword); !ok {
-		fmt.Fprintf(w, result)
+	if err := utils.TestPassword(edit.NewPassword); err != nil {
+		fmt.Fprintf(w, err.Error())
 		return
 	}
 	//hash the password
@@ -145,7 +79,7 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//test the password of the user
 	//if the test failed, what do we do? Stop the process. On connait la chanson
-	if ok := utils.ComparePassword(editor.User.Password, currentUser.Password); !ok {
+	if err := utils.ComparePassword(editor.User.Password, currentUser.Password); err != nil {
 		fmt.Fprintf(w, "Incorect password")
 		return
 	}
