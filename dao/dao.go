@@ -21,7 +21,7 @@ const (
 
 //Function for inserting a new user
 //accept a user structure as argument
-func InsertUser(newUser models.User) string {
+func InsertUser(newUser models.User) error {
 	//get the db instance
 	db := GetDB()
 	//get the role id
@@ -31,7 +31,7 @@ func InsertUser(newUser models.User) string {
 	//if there is an error, handle it
 	if err != nil {
 		//response := ErrorHandler(err)
-		return err.Error()
+		return err
 	}
 	//insertion succed
 	return "New user " + newUser.Username + " inserted!\nTry to connect."
