@@ -67,7 +67,5 @@ func TestCredentials(userData models.User, pass bool) error {
 }
 
 func Sanitize(userData *models.User) {
-	userData.Firstname = strings.ToLower(userData.Firstname)
-	userData.Lastname = strings.ToLower(userData.Lastname)
 	userData.Username = strings.ToLower(userData.Username)
 }

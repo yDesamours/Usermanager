@@ -8,13 +8,15 @@ import (
 
 //queries string
 const (
-	insertUser      = `INSERT INTO users (firstname, lastname, username, password, role) VALUES ($1, $2, $3, $4, $5)`
-	selectAllusers  = `SELECT firstname, lastname, username, role From users`
-	updateUser      = `UPDATE users SET firstname=$1, lastname=$2, username=$3 WHERE username=$4`
-	adminUpdateUser = `UPDATE users SET firstname=$1, lastname=$2, username=$3, role=$4, is_active=$5 WHERE username=$6`
-	updatePassword  = `UPDATE users SET password=$1 WHERE username=$2`
-	desactivateUser = `UPDATE users set is_active=false WHERE username=$1`
-	getUser         = `SELECT * FROM users WHERE username=$1`
+	insertUser        = `INSERT INTO users (firstname, lastname, username, password, role_id) VALUES ($1, $2, $3, $4, $5)`
+	selectAllusers    = `SELECT firstname, lastname, username, role_name, created_on, is_active FROM users`
+	updateUser        = `UPDATE users SET firstname=$1, lastname=$2 WHERE username=$3`
+	adminUpdateUser   = `UPDATE users SET firstname=$1, lastname=$2, username=$3, role=$4, is_active=$5 WHERE username=$6`
+	updatePassword    = `UPDATE users SET password=$1 WHERE username=$2`
+	desactivateUser   = `UPDATE users set is_active=false WHERE username=$1`
+	getUser           = `SELECT firstname, lastname, username, role_name, is_active, created_on FROM users INNER JOIN role USING(role_id) WHERE username=$1`
+	selectRoleID      = `SELECT role_id FROM roles where role_name=$1`
+	getALLPermissions = `SELECT permission_name FROM roles INNER JOIN role_permission USING(permission_id) INNER JOIN roles USING(role_id) where role_name = $1`
 )
 
 //Function for inserting a new user
@@ -22,8 +24,10 @@ const (
 func InsertUser(newUser models.User) string {
 	//get the db instance
 	db := GetDB()
+	//get the role id
+	role_ID := GetRoleID(newUser.Role)
 	//query the database
-	_, err := db.Exec(insertUser, newUser.Firstname, newUser.Lastname, newUser.Username, newUser.Password, newUser.Role)
+	_, err := db.Exec(insertUser, newUser.Firstname, newUser.Lastname, newUser.Username, newUser.Password, role_ID)
 	//if there is an error, handle it
 	if err != nil {
 		//response := ErrorHandler(err)
@@ -51,7 +55,7 @@ func GetAllUsers() []models.User {
 	for rows.Next() {
 		var user models.User
 		//store every column into the correct variable
-		rows.Scan(&user.Firstname, &user.Lastname, &user.Username, &user.Role)
+		rows.Scan(&user.Firstname, &user.Lastname, &user.Username, &user.Role, &user.CreatedOn, &user.IsActive)
 		users = append(users, user)
 	}
 
@@ -65,7 +69,7 @@ func EditUser(username string, user models.User) bool {
 	//set username to lowercase
 	fmt.Println(user)
 	//execute the query. the exec function return the result of the query and an error
-	result, err := db.Exec(updateUser, user.Firstname, user.Lastname, user.Username, username)
+	result, err := db.Exec(updateUser, user.Firstname, user.Lastname, username)
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -124,11 +128,44 @@ func GetUser(username string) (models.User, error) {
 	//set username to lowewrcase
 	lowerName := strings.ToLower(username)
 	//QueryRow return a single row
-	err := db.QueryRow(getUser, lowerName).Scan(&id, &savedUser.Firstname, &savedUser.Lastname, &savedUser.Username, &savedUser.IsActive, &savedUser.Password, &savedUser.Role, &savedUser.CreatedOn, &savedUser.ModifiedBy)
+	err := db.QueryRow(getUser, lowerName).Scan(&id, &savedUser.Firstname, &savedUser.Lastname, &savedUser.Username, &savedUser.Role, &savedUser.IsActive, &savedUser.CreatedOn)
 
 	if err != nil {
 		return savedUser, err
 	}
 
 	return savedUser, nil
+}
+
+//this function return the id of a role
+func GetRoleID(role_name string) string {
+	db := GetDB()
+	var role_ID string
+	err := db.QueryRow(selectRoleID, role_name).Scan(&role_ID)
+	if err != nil {
+		return "role doesn't exists"
+	}
+
+	return role_ID
+}
+
+//this function return all the permissions attached to a role
+func GetRolePermissions(roleName string) ([]string, error) {
+	db := GetDB()
+	var permissions []string
+	rows, err := db.Query(getALLPermissions, roleName)
+	defer rows.Close()
+
+	if err != nil {
+		return permissions, err
+	}
+
+	for rows.Next() {
+		var permission string
+
+		rows.Scan(&permission)
+		permissions = append(permissions, permission)
+	}
+
+	return permissions, nil
 }

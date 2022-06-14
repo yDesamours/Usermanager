@@ -17,11 +17,12 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	var newUser models.User
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
 
-	_, err := sessionHandlers.GetUser(r)
+	//get the information about the current user
+	currentUser, err := sessionHandlers.GetUser(r)
 
 	//set de user's role and activity to their default value
-	if err != nil {
-		newUser.Role = 1
+	if err != nil || currentUser.Role != "admin" {
+		newUser.Role = "client"
 		newUser.IsActive = true
 	}
 
@@ -61,6 +62,7 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	//get the current user infos
 	currentUser, _ := sessionHandlers.GetUser(r)
+
 	//thes for password matching. On failure, end the process
 	if ok := utils.ComparePassword(edit.Password, currentUser.Password); !ok {
 		fmt.Fprintf(w, "Incorect password")
@@ -118,7 +120,7 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user
 	currentUser, _ := sessionHandlers.GetUser(r)
 	//if he is not an admin, stop the process
-	if currentUser.Role != 1 {
+	if currentUser.Role != "admin" {
 		fmt.Fprintf(w, "Not allowed")
 		return
 	}
@@ -138,7 +140,7 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//If the targeted user is an admin, stop the process
-	if targetedUser.Role == 1 {
+	if targetedUser.Role == "admin" {
 		fmt.Fprintf(w, "Not allowed")
 		return
 	}

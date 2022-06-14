@@ -9,7 +9,7 @@ type User struct {
 	Lastname   string        `json:"lastname"`
 	Username   string        `json:"username"`
 	Password   string        `json:"password"`
-	Role       int           `json:"role"`
+	Role       string        `json:"role"`
 	IsActive   bool          `json:"isactive"`
 	CreatedOn  string        `json:"isActive"`
 	ModifiedBy sql.NullInt64 `json:"modifiedBy"`
