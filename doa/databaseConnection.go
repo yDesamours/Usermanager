@@ -1,4 +1,4 @@
-package database
+package doa
 
 import (
 	"database/sql"
