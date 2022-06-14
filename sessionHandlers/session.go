@@ -62,7 +62,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //this function retrieve the infos about the connected user
-func GetUser(r *http.Request) (models.User, error) {
+func GetUser(r *http.Request) (*models.User, error) {
 
 	//get the session
 	session, _ := Sessionstore.Get(r, "current-session")
