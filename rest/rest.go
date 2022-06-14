@@ -24,7 +24,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	//set de user's role and activity to their default value
 	if err != nil || currentUser.Role != "admin" {
 		newUser.Role = "client"
-		newUser.IsActive = true
+		newUser.IsActive = false
 	}
 	//contact the services for insertion
 	result := services.AddUser(newUser)
@@ -32,13 +32,14 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	if result != nil {
 		fmt.Fprintf(w, result.Error())
 	}
+	//everything is ok
 	fmt.Fprintf(w, "New user Inserted")
 }
 
 //to get all users
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 	//query the dao for all users
-	users := dao.GetAllUsers()
+	users := services.GetAllUsers()
 	//send response as json
 	json.NewEncoder(w).Encode(users)
 
