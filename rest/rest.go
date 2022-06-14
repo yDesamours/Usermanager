@@ -78,7 +78,7 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 	utils.Sanitize(&edit)
 	//query the database for update
 	if update := database.EditUser(currentUser.Username, edit); update {
-		fmt.Fprintf(w, "Username updated to %s", edit.Username)
+		fmt.Fprintf(w, "User's informations successfully updated!")
 	} else {
 		fmt.Fprintf(w, "Failed to update username")
 	}
