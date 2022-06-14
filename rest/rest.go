@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"usermanager/dao"
 	"usermanager/models"
+	"usermanager/services"
 	"usermanager/sessionHandlers"
 	"usermanager/utils"
 )
@@ -13,31 +14,14 @@ import (
 //allow a user to change his password
 func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
-	//get old password and new password submitted by the user
-	edit := struct {
-		ActualPassword string `json:"actualpassword"`
-		NewPassword    string `json:"newpassword"`
-	}{}
-	json.NewDecoder(r.Body).Decode(&edit)
 	//get the current user info
 	currentUser, _ := sessionHandlers.GetUser(r)
-	//test for password matching
-	if err := utils.ComparePassword(edit.ActualPassword, currentUser.Password); err != nil {
-		fmt.Fprintf(w, "Incorect password")
-		return
-	}
-	//test the new password
-	if err := utils.TestPassword(edit.NewPassword); err != nil {
-		fmt.Fprintf(w, err.Error())
-		return
-	}
-	//hash the password
-	hash := utils.HashPassword(edit.NewPassword)
+
 	//query the dao to change the password
-	if update := dao.EditPassword(hash, currentUser.Username); update {
+	if update := services.EditpasswordService(r.Body, *currentUser); update == nil {
 		fmt.Fprintf(w, "Password Updated!")
 	} else {
-		fmt.Fprintf(w, "Failed to update password")
+		fmt.Fprintf(w, update.Error())
 	}
 }
 

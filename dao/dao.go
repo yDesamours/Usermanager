@@ -73,21 +73,20 @@ func EditUser(username string, user models.User) error {
 
 //allows to change a password
 //accept the new password and the username as argument
-func EditPassword(newPassword, username string) bool {
+func EditPassword(newPassword, username string) error {
 	db := GetDB()
 
 	//set username to lowewrcase
 	result, err := db.Exec(updatePassword, newPassword, username)
 	if err != nil {
-		fmt.Println(err)
-		return false
+		return err
 	}
 
-	if affected, _ := result.RowsAffected(); affected == 0 {
-		return false
+	if affected, err := result.RowsAffected(); affected == 0 {
+		return err
 	}
 
-	return true
+	return nil
 }
 
 //allows and admin to change all the user info except the the password
