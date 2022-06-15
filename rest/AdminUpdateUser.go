@@ -7,7 +7,13 @@ import (
 	"usermanager/sessionHandlers"
 )
 
-//this handler permits an admin to modify a user's info
+// AdminEditUser godoc
+// @Description Allows an admin yo edit a user's information
+// @Accept  json
+// @Success 200 {object} string "The user's info are edited"
+// @Failure 403 {string} string
+// @Failure 401 {string} string
+// @Router /api/usermanager/adminupdateuser [put]
 func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user
 	currentUser, _ := sessionHandlers.GetUser(r)

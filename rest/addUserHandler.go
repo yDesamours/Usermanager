@@ -9,7 +9,12 @@ import (
 	"usermanager/sessionHandlers"
 )
 
-//for adding a new user
+// Adduser godoc
+// @Description Create a user
+// @Accept  json
+// @Success 200 {object} string "Insert a new user"
+// @Failure 403 {string} string
+// @Router /api/usermanager/register [post]
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	//etract the json data from the request. copy them into a user structure

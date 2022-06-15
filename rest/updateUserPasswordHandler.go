@@ -7,7 +7,12 @@ import (
 	"usermanager/sessionHandlers"
 )
 
-//allow a user to change his password
+// EditPassword godoc
+// @Description Create a user
+// @Accept  json
+// @Success 200 {object} string "Update a password"
+// @Failure 401 {string} string
+// @Router /api/usermanager/updatepassword [put]
 func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 	//get the current user info

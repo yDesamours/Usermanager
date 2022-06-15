@@ -1,0 +1,90 @@
+basePath: /api/usermanager
+host: 192.168.10.137:9090
+info:
+  contact:
+    email: dyvelt@tainosystems.com
+  description: This is a mini api that allows to perform basics CRUD operations
+  title: USERMANAGER API
+  version: "1.0"
+paths:
+  /api/usermanager/adminupdateuser:
+    put:
+      consumes:
+      - application/json
+      description: Allows an admin yo edit a user's information
+      responses:
+        "200":
+          description: The user's info are edited
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+  /api/usermanager/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a user
+      responses:
+        "200":
+          description: Insert a new user
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+  /api/usermanager/updatepassword:
+    put:
+      consumes:
+      - application/json
+      description: Create a user
+      responses:
+        "200":
+          description: Update a password
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+  /api/usermanager/updateuser:
+    put:
+      consumes:
+      - application/json
+      description: Edit a user's informations
+      responses:
+        "200":
+          description: Infos are edited
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            type: string
+  /api/usermanager/users:
+    get:
+      consumes:
+      - application/json
+      description: Get all the users
+      responses:
+        "200":
+          description: List of all the users
+          schema:
+            items:
+              type: string
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+swagger: "2.0"

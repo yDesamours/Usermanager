@@ -9,7 +9,13 @@ import (
 	"usermanager/sessionHandlers"
 )
 
-//Allow a user to modify his own data
+// EditUser godoc
+// @Description Edit a user's informations
+// @Accept  json
+// @Success 200 {object} string "Infos are edited"
+// @Failure 403 {string} string
+// @Failure 401 {string} string
+// @Router /api/usermanager/updateuser [put]
 func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	//extract new info from request body
