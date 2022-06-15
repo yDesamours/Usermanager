@@ -17,11 +17,11 @@ func GetRolePermissions(roleName string) ([]string, error) {
 	db := GetDB()
 	var permissions []string
 	rows, err := db.Query(getALLPermissions, roleName)
-	defer rows.Close()
 
 	if err != nil {
 		return permissions, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var permission string

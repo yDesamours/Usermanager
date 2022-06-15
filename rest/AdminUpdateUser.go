@@ -12,14 +12,10 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user
 	currentUser, _ := sessionHandlers.GetUser(r)
 	//if he is not an admin, stop the process
-	if currentUser.Role != "admin" {
-		fmt.Fprintf(w, "Not allowed")
-		return
-	}
 
 	//everything is correct. Contact the dao to make the change
 	if err := services.AdminUpdateUser(r.Body, *currentUser); err != nil {
-		fmt.Fprintf(w, "Failed to update user's infos!")
+		fmt.Fprintf(w, err.Error())
 	} else {
 		fmt.Fprintf(w, "User's infos updated!")
 	}
