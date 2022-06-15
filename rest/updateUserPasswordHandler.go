@@ -8,7 +8,7 @@ import (
 )
 
 // EditPassword godoc
-// @Description Create a user
+// @Description Update a user password
 // @Accept  json
 // @Success 200 {object} string "Update a password"
 // @Failure 401 {string} string

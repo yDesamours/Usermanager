@@ -15,6 +15,12 @@ import (
 var connectionString = dao.CreateConnectionString()
 var Sessionstore, err = pgstore.NewPGStore(connectionString, []byte("my secure key"))
 
+// Adduser godoc
+// @Description Allows a registered user to login
+// @Accept  json
+// @Success 200 {object} string "Login succeed"
+// @Failure 403 {string} string "Login failed"
+// @Router /api/usermanager/register [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var logger models.User //to store user credentials
@@ -25,6 +31,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	//if user does not exist
 
 	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, err.Error())
 		return
 	}
@@ -50,6 +57,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Adduser godoc
+// @Description End a session
+// @Success 200 {object} string "Logout succeed"
+// @Router /api/usermanager/register [post]
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	//get the session
 	session, _ := Sessionstore.Get(r, "currentsession")
@@ -75,7 +86,6 @@ func GetUser(r *http.Request) (*models.User, error) {
 	return currentUser, err
 }
 
-//Middlewarre to check if user is connected
 func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := Sessionstore.Get(r, "current-session")
