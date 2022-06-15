@@ -1,4 +1,32 @@
 basePath: /api/usermanager
+definitions:
+  models.User:
+    properties:
+      createdOn:
+        type: string
+      firstname:
+        type: string
+      isActive:
+        type: boolean
+      lastname:
+        type: string
+      modifiedBy:
+        $ref: '#/definitions/sql.NullInt64'
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  sql.NullInt64:
+    properties:
+      int64:
+        type: integer
+      valid:
+        description: Valid is true if Int64 is not NULL
+        type: boolean
+    type: object
 host: 192.168.10.137:9090
 info:
   contact:
@@ -25,12 +53,47 @@ paths:
           description: Forbidden
           schema:
             type: string
-  /api/usermanager/register:
+  /api/usermanager/login:
+    post:
+      consumes:
+      - application/json
+      description: Allows a registered user to login
+      responses:
+        "200":
+          description: Login succeed
+          schema:
+            type: string
+        "403":
+          description: Login failed
+          schema:
+            type: string
+  /api/usermanager/logout:
     post:
       description: End a session
       responses:
         "200":
           description: Logout succeed
+          schema:
+            type: string
+  /api/usermanager/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a user
+      parameters:
+      - description: The firstname of the person
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: Insert a new user
+          schema:
+            type: string
+        "403":
+          description: Forbidden
           schema:
             type: string
   /api/usermanager/updatepassword:
@@ -43,8 +106,8 @@ paths:
           description: Update a password
           schema:
             type: string
-        "401":
-          description: Unauthorized
+        "403":
+          description: Forbidden
           schema:
             type: string
   /api/usermanager/updateuser:
@@ -75,7 +138,7 @@ paths:
           description: List of all the users
           schema:
             items:
-              type: string
+              $ref: '#/definitions/models.User'
             type: array
         "401":
           description: Unauthorized

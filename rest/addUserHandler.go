@@ -12,6 +12,7 @@ import (
 // Adduser godoc
 // @Description Create a user
 // @Accept  json
+// @param user body models.User true "The firstname of the person"
 // @Success 200 {object} string "Insert a new user"
 // @Failure 403 {string} string
 // @Router /api/usermanager/register [post]

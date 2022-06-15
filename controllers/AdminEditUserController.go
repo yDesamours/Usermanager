@@ -11,19 +11,6 @@ import (
 )
 
 func AdminEditUserController(r io.ReadCloser, currentUser models.User) error {
-	//only admin can access this route
-	var allowed bool
-	permissions, _ := dao.GetRolePermissions(currentUser.Role)
-	for _, permission := range permissions {
-		fmt.Println(permission)
-		if permission == "edit user" {
-			allowed = true
-			break
-		}
-	}
-	if !allowed {
-		return errors.New("--Not allowed!")
-	}
 
 	//etract the json data from the request. Copy them into a structure
 	//This structure has 2 fields. One for storing new data about the user, but the password sent his the admin's

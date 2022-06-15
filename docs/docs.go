@@ -46,12 +46,67 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/usermanager/register": {
+        "/api/usermanager/login": {
+            "post": {
+                "description": "Allows a registered user to login",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login succeed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Login failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usermanager/logout": {
             "post": {
                 "description": "End a session",
                 "responses": {
                     "200": {
                         "description": "Logout succeed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usermanager/register": {
+            "post": {
+                "description": "Create a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "description": "The firstname of the person",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Insert a new user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "string"
                         }
@@ -72,8 +127,8 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "type": "string"
                         }
@@ -121,7 +176,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "$ref": "#/definitions/models.User"
                             }
                         }
                     },
@@ -131,6 +186,49 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "createdOn": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "modifiedBy": {
+                    "$ref": "#/definitions/sql.NullInt64"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "sql.NullInt64": {
+            "type": "object",
+            "properties": {
+                "int64": {
+                    "type": "integer"
+                },
+                "valid": {
+                    "description": "Valid is true if Int64 is not NULL",
+                    "type": "boolean"
                 }
             }
         }

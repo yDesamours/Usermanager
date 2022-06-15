@@ -20,7 +20,7 @@ var Sessionstore, err = pgstore.NewPGStore(connectionString, []byte("my secure k
 // @Accept  json
 // @Success 200 {object} string "Login succeed"
 // @Failure 403 {string} string "Login failed"
-// @Router /api/usermanager/register [post]
+// @Router /api/usermanager/login [post]
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var logger models.User //to store user credentials
@@ -60,7 +60,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 // Adduser godoc
 // @Description End a session
 // @Success 200 {object} string "Logout succeed"
-// @Router /api/usermanager/register [post]
+// @Router /api/usermanager/logout [post]
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	//get the session
 	session, _ := Sessionstore.Get(r, "currentsession")
@@ -86,6 +86,7 @@ func GetUser(r *http.Request) (*models.User, error) {
 	return currentUser, err
 }
 
+//Middleware that check if a user is log in before accessing a route
 func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := Sessionstore.Get(r, "current-session")
@@ -97,5 +98,38 @@ func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 		//if user is connected, let him access the desired route
 		f(w, r)
 
+	}
+}
+
+//middleware that check if the have the correct right to access this route.
+//Required permission is passed as the second parameter
+func HaveRight(f http.HandlerFunc, permission string) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, _ := Sessionstore.Get(r, "current-session")
+		//if the user is not logged in, end the process
+		if _, ok := session.Values["username"]; !ok {
+			http.Redirect(w, r, "api/usermanager/login", http.StatusUnauthorized)
+			return
+		}
+		//only admin can access this route
+		var allowed bool
+		//get the currentuser infos
+		currentUser, _ := GetUser(r)
+		//get all the user's permissions
+		permissions, _ := dao.GetRolePermissions(currentUser.Role)
+		for _, permission := range permissions {
+			fmt.Println(permission)
+			if permission == permission {
+				allowed = true
+				break
+			}
+		}
+		//does the user have correct permisions
+		if !allowed {
+			fmt.Fprintf(w, "--Not allowed!")
+			return
+		}
+		f(w, r)
 	}
 }
