@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"usermanager/dao"
 	"usermanager/models"
 )
@@ -8,11 +9,12 @@ import (
 func GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	rows, err := dao.GetAllUsers()
+	fmt.Println(rows)
 	//close the rows once we read them all
-	defer rows.Close()
 	if err != nil {
 		return users, err
 	}
+	defer rows.Close()
 	//iterate through the rows
 	for rows.Next() {
 		var user models.User

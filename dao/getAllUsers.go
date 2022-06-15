@@ -2,6 +2,7 @@ package dao
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 //function to get all users
@@ -12,6 +13,7 @@ func GetAllUsers() (*sql.Rows, error) {
 	rows, err := db.Query(selectAllusers)
 	//handle error
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 	return rows, nil

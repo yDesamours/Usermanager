@@ -23,7 +23,7 @@ type connectString struct {
 func CreateConnectionString() string {
 	var keys connectString
 	//open json file
-	keyFile, err := os.Open("database/keys.json")
+	keyFile, err := os.Open("dao/keys.json")
 	if err != nil {
 		println(err.Error())
 		panic("Can't open keys.json file!")

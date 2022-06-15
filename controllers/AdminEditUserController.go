@@ -35,7 +35,7 @@ func AdminEditUserController(r io.ReadCloser, currentUser models.User) error {
 	}
 	//test the password of the user
 	//if the test failed, what do we do? Stop the process. On connait la chanson
-	if err := utils.ComparePassword(editor.User.Password, currentUser.Password); err != nil {
+	if ok := utils.ComparePassword(editor.User.Password, currentUser.Password); !ok {
 		return errors.New("Incorect password")
 
 	}

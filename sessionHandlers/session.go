@@ -20,7 +20,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var logger models.User //to store user credentials
 	//copy the user credentials sent as json
 	json.NewDecoder(r.Body).Decode(&logger)
-	fmt.Println(logger)
 	//search for the user in the dao
 	savedUser, err := dao.GetUser(logger.Username)
 	//if user does not exist
@@ -31,7 +30,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//if password is incorrect
-	if err := utils.ComparePassword(logger.Password, savedUser.Password); err != nil {
+	if ok := utils.ComparePassword(logger.Password, savedUser.Password); !ok {
 		fmt.Fprintf(w, "Incorrect password!")
 		return
 	}

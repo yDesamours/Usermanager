@@ -5,6 +5,6 @@ import (
 	"usermanager/models"
 )
 
-func EditUserService(edit, currentUser models.User) error {
+func EditUserService(edit, currentUser *models.User) error {
 	return controllers.EditUserControllers(edit, currentUser)
 }

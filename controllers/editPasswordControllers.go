@@ -18,7 +18,7 @@ func EditPasswordController(r io.ReadCloser, user models.User) error {
 	json.NewDecoder(r).Decode(&edit)
 
 	//test for password matching
-	if err := utils.ComparePassword(edit.ActualPassword, user.Password); err != nil {
+	if ok := utils.ComparePassword(edit.ActualPassword, user.Password); !ok {
 		return errors.New("Incorrect passowrd")
 	}
 	//test the new password

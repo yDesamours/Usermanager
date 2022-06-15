@@ -19,9 +19,9 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 	//get the current user infos
 	currentUser, _ := sessionHandlers.GetUser(r)
 
-	if update := services.EditUserService(edit, *currentUser); update != nil {
+	if update := services.EditUserService(&edit, currentUser); update == nil {
 		fmt.Fprintf(w, "User's informations successfully updated!")
 	} else {
-		fmt.Fprintf(w, "Failed to update username")
+		fmt.Fprintf(w, update.Error())
 	}
 }

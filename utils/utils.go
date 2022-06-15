@@ -32,10 +32,10 @@ func HashPassword(pass string) string {
 	return string(hash)
 }
 
-func ComparePassword(password, hash string) error {
+func ComparePassword(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 
-	return err
+	return err == nil
 }
 
 func TestCredentials(userData models.User, pass bool) error {
