@@ -48,19 +48,10 @@ const docTemplate = `{
         },
         "/api/usermanager/register": {
             "post": {
-                "description": "Create a user",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "End a session",
                 "responses": {
                     "200": {
-                        "description": "Insert a new user",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
+                        "description": "Logout succeed",
                         "schema": {
                             "type": "string"
                         }
@@ -70,7 +61,7 @@ const docTemplate = `{
         },
         "/api/usermanager/updatepassword": {
             "put": {
-                "description": "Create a user",
+                "description": "Update a user password",
                 "consumes": [
                     "application/json"
                 ],

@@ -9,7 +9,7 @@ import (
 // GetUsers godoc
 // @Description Get all the users
 // @Accept  json
-// @Success 200 {array} string "List of all the users"
+// @Success 200 array  "List of all the users"
 // @Failure 401 {string} string
 // @Router /api/usermanager/users [get]
 func GetUsersHandler(w http.ResponseWriter, r *http.Request) {

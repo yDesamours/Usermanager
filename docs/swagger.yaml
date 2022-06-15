@@ -27,23 +27,17 @@ paths:
             type: string
   /api/usermanager/register:
     post:
-      consumes:
-      - application/json
-      description: Create a user
+      description: End a session
       responses:
         "200":
-          description: Insert a new user
-          schema:
-            type: string
-        "403":
-          description: Forbidden
+          description: Logout succeed
           schema:
             type: string
   /api/usermanager/updatepassword:
     put:
       consumes:
       - application/json
-      description: Create a user
+      description: Update a user password
       responses:
         "200":
           description: Update a password

@@ -11,7 +11,7 @@ import (
 // @Description Update a user password
 // @Accept  json
 // @Success 200 {object} string "Update a password"
-// @Failure 401 {string} string
+// @Failure 403 {string} string
 // @Router /api/usermanager/updatepassword [put]
 func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 
