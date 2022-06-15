@@ -28,6 +28,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	result := services.AddUser(newUser)
 	//the insertion may fail
 	if result != nil {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, result.Error())
 	}
 	//everything is ok

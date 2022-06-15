@@ -17,6 +17,7 @@ func EditPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	if update := services.EditpasswordService(r.Body, *currentUser); update == nil {
 		fmt.Fprintf(w, "Password Updated!")
 	} else {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, update.Error())
 	}
 }

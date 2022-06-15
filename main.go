@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	_ "tainopersonnel/main/docs"
 	"time"
 	"usermanager/dao"
 	"usermanager/routes"

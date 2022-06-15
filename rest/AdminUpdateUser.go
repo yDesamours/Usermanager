@@ -15,6 +15,7 @@ func AdminEditUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	//everything is correct. Contact the dao to make the change
 	if err := services.AdminUpdateUser(r.Body, *currentUser); err != nil {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, err.Error())
 	} else {
 		fmt.Fprintf(w, "User's infos updated!")

@@ -31,6 +31,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	//if password is incorrect
 	if ok := utils.ComparePassword(logger.Password, savedUser.Password); !ok {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, "Incorrect password!")
 		return
 	}
@@ -80,7 +81,7 @@ func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 		session, _ := Sessionstore.Get(r, "current-session")
 		//if the user is not logged in, end the process
 		if _, ok := session.Values["username"]; !ok {
-			http.Redirect(w, r, "api/usermanager/login", http.StatusForbidden)
+			http.Redirect(w, r, "api/usermanager/login", http.StatusUnauthorized)
 			return
 		}
 		//if user is connected, let him access the desired route

@@ -22,6 +22,7 @@ func EditUserHandler(w http.ResponseWriter, r *http.Request) {
 	if update := services.EditUserService(&edit, currentUser); update == nil {
 		fmt.Fprintf(w, "User's informations successfully updated!")
 	} else {
+		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintf(w, update.Error())
 	}
 }
