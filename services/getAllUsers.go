@@ -5,6 +5,6 @@ import (
 	"usermanager/models"
 )
 
-func GetAllUsers() ([]models.User, error) {
+func GetAllUsers() ([]models.UserResponse, error) {
 	return controllers.GetAllUsers()
 }

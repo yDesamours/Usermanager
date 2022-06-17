@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"usermanager/dao"
 	"usermanager/models"
@@ -21,7 +20,7 @@ func AdminEditUserController(r io.ReadCloser, currentUser models.User) error {
 	}{}
 	json.NewDecoder(r).Decode(&editor) //all data are strored.fmt.Println(editor)
 	//call the dao to retrieve informations about the targeted user
-	fmt.Println(editor.Username)
+
 	targetedUser, err := dao.GetUser(editor.Username)
 	if err != nil {
 		return err
@@ -43,7 +42,7 @@ func AdminEditUserController(r io.ReadCloser, currentUser models.User) error {
 
 	}
 
-	if updated := dao.AdminEditUser(editor.Username, editor.User); updated != nil {
+	if updated := dao.AdminEditUser(editor.Username, editor.User, currentUser.Username); updated != nil {
 		return updated
 	}
 	return nil

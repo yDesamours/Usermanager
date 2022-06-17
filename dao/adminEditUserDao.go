@@ -7,10 +7,10 @@ import (
 
 //allows and admin to change all the user info except the the password
 //accept the actual username as argument and the new user infos
-func AdminEditUser(username string, user models.User) error {
+func AdminEditUser(username string, user models.User, adminUsername string) error {
 	db := GetDB()
 
-	result, err := db.Exec(adminUpdateUser, user.Firstname, user.Lastname, user.Username, user.Role, user.IsActive, username)
+	result, err := db.Exec(adminUpdateUser, user.Firstname, user.Lastname, user.Username, user.Role, user.IsActive, adminUsername, username)
 	if err != nil {
 		return err
 	}

@@ -14,6 +14,7 @@ func Router() *mux.Router {
 	//mount all the routes
 	router.HandleFunc("/api/usermanager/register", rest.AddUserHandler).Methods("POST")
 	router.HandleFunc("/api/usermanager/users", sessionHandlers.IsloggedInHandler(sessionHandlers.HaveRight(rest.GetUsersHandler, "view users"))).Methods("GET")
+	router.HandleFunc("/api/usermanager/view/{username}", sessionHandlers.IsloggedInHandler(sessionHandlers.HaveRight(rest.GetUserHandler, "view users"))).Methods("GET")
 	router.HandleFunc("/api/usermanager/updateuser", sessionHandlers.IsloggedInHandler(sessionHandlers.HaveRight(rest.EditUserHandler, "edit self"))).Methods("PUT")
 	router.HandleFunc("/api/usermanager/updatepassword", sessionHandlers.HaveRight(rest.EditPasswordHandler, "edit password")).Methods("PUT")
 	router.HandleFunc("/api/usermanager/adminupdateuser", sessionHandlers.HaveRight(rest.AdminEditUserHandler, "edit user")).Methods("PUT")

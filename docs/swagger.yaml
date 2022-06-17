@@ -19,6 +19,21 @@ definitions:
       username:
         type: string
     type: object
+  models.UserResponse:
+    properties:
+      createdOn:
+        type: string
+      firstname:
+        type: string
+      isActive:
+        type: boolean
+      lastname:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   sql.NullInt64:
     properties:
       int64:
@@ -138,7 +153,7 @@ paths:
           description: List of all the users
           schema:
             items:
-              $ref: '#/definitions/models.User'
+              $ref: '#/definitions/models.UserResponse'
             type: array
         "401":
           description: Unauthorized

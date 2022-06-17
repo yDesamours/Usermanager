@@ -6,8 +6,8 @@ import (
 	"usermanager/models"
 )
 
-func GetAllUsers() ([]models.User, error) {
-	var users []models.User
+func GetAllUsers() ([]models.UserResponse, error) {
+	var users []models.UserResponse
 	rows, err := dao.GetAllUsers()
 	fmt.Println(rows)
 	//close the rows once we read them all
@@ -17,7 +17,7 @@ func GetAllUsers() ([]models.User, error) {
 	defer rows.Close()
 	//iterate through the rows
 	for rows.Next() {
-		var user models.User
+		var user models.UserResponse
 		//store every column into the correct variable
 		rows.Scan(&user.Firstname, &user.Lastname, &user.Username, &user.Role, &user.CreatedOn, &user.IsActive)
 		users = append(users, user)

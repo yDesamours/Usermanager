@@ -96,6 +96,7 @@ func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		//if user is connected, let him access the desired route
+
 		f(w, r)
 
 	}
@@ -103,24 +104,18 @@ func IsloggedInHandler(f http.HandlerFunc) http.HandlerFunc {
 
 //middleware that check if the have the correct right to access this route.
 //Required permission is passed as the second parameter
-func HaveRight(f http.HandlerFunc, permission string) http.HandlerFunc {
+func HaveRight(f http.HandlerFunc, requiredPermission string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := Sessionstore.Get(r, "current-session")
-		//if the user is not logged in, end the process
-		if _, ok := session.Values["username"]; !ok {
-			http.Redirect(w, r, "api/usermanager/login", http.StatusUnauthorized)
-			return
-		}
 		//only admin can access this route
 		var allowed bool
 		//get the currentuser infos
 		currentUser, _ := GetUser(r)
+
 		//get all the user's permissions
 		permissions, _ := dao.GetRolePermissions(currentUser.Role)
 		for _, permission := range permissions {
-			fmt.Println(permission)
-			if permission == permission {
+			if permission == requiredPermission {
 				allowed = true
 				break
 			}

@@ -3,6 +3,7 @@ package rest
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"usermanager/services"
 )
 
@@ -12,9 +13,11 @@ import (
 // @Success 200 array models.UserResponse "List of all the users"
 // @Failure 401 {string} string
 // @Router /api/usermanager/users [get]
-func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+func GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	username := path[strings.LastIndex(path, "/"):]
 	//query the dao for all users
-	users, _ := services.GetAllUsers()
+	users, _ := services.GetUser(username)
 	//send response as json
 	json.NewEncoder(w).Encode(users)
 
